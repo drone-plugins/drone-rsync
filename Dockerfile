@@ -4,6 +4,6 @@
 #     docker build --rm=true -t plugins/drone-rsync .
 
 FROM alpine:3.2
-RUN apk add -U ca-certificates rsync && rm -rf /var/cache/apk/*
+RUN apk add -U ca-certificates openssh-client rsync && rm -rf /var/cache/apk/*
 ADD drone-rsync /bin/
 ENTRYPOINT ["/bin/drone-rsync"]
