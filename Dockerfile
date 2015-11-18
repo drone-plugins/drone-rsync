@@ -1,21 +1,9 @@
-# Docker image for the rsync plugin
+# Docker image for the Drone rsync plugin
 #
+#     CGO_ENABLED=0 go build -a -tags netgo
 #     docker build --rm=true -t plugins/drone-rsync .
 
-FROM library/golang:1.4
-
-ADD . /go/src/github.com/drone-plugins/drone-rsync/
-
-
-RUN apt-get update && apt-get -y install rsync
-
-
-RUN go get github.com/drone-plugins/drone-rsync/... && \
-    go install github.com/drone-plugins/drone-rsync
-
-
-RUN apt-get update -qq           && \
-	apt-get -y install rsync     && \
-	rm -rf /var/lib/apt/lists/*
-
-ENTRYPOINT ["/go/bin/drone-rsync"]
+FROM alpine:3.2
+RUN apk add -U ca-certificates rsync && rm -rf /var/cache/apk/*
+ADD drone-rsync /bin/
+ENTRYPOINT ["/bin/drone-rsync"]
