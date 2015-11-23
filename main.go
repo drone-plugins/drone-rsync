@@ -26,7 +26,7 @@ type Rsync struct {
 	Target    string   `json:"target"`
 	Delete    bool     `json:"delete"`
 	Recursive bool     `json:"recursive"`
-	Exclude   string   `json:"exclude"`
+	Exclude   []string `json:"exclude"`
 	Commands  []string `json:"commands"`
 }
 
@@ -107,7 +107,9 @@ func buildRsync(rs *Rsync) *exec.Cmd {
 
 	// append files to exclude
 	if len(rs.Exclude) != 0 {
-		args = append(args, fmt.Sprintf("--exclude=%s", rs.Exclude))
+		for _,pattern := range rs.Exclude {
+			args = append(args, fmr.Sprintf("--exclude=%s", pattern))
+		}
 	}
 
 	args = append(args, rs.Source)
