@@ -105,7 +105,7 @@ func buildRsync(rs *Rsync) *exec.Cmd {
 	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
 
 	// append files to exclude
-	for _,pattern := range rs.Exclude.Slice {
+	for _,pattern := range rs.Exclude.Slice() {
 		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
 	}
 
