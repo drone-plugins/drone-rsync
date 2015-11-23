@@ -20,12 +20,12 @@ type Rsync struct {
 	Hosts drone.StringSlice `json:"host"`
 	host  string            `json:"-"`
 
-	User      string   					`json:"user"`
-	Port      int      					`json:"port"`
-	Source    string   					`json:"source"`
-	Target    string   					`json:"target"`
-	Delete    bool     					`json:"delete"`
-	Recursive bool     					`json:"recursive"`
+	User      string            `json:"user"`
+	Port      int               `json:"port"`
+	Source    string            `json:"source"`
+	Target    string            `json:"target"`
+	Delete    bool              `json:"delete"`
+	Recursive bool              `json:"recursive"`
 	Exclude   drone.StringSlice `json:"exclude"`
 	Commands  []string          `json:"commands"`
 }
