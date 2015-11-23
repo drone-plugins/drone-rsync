@@ -22,6 +22,9 @@ deploy:
     target: send/files/to
     delete: false
     recursive: true
+    exclude:
+      - "exclude/this/pattern/*"
+      - "or/this/one"
     commands:
       - service nginx restart
 ```
