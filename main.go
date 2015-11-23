@@ -108,7 +108,7 @@ func buildRsync(rs *Rsync) *exec.Cmd {
 	// append files to exclude
 	if len(rs.Exclude) != 0 {
 		for _,pattern := range rs.Exclude {
-			args = append(args, fmr.Sprintf("--exclude=%s", pattern))
+			args = append(args, fmt.Sprintf("--exclude=%s", pattern))
 		}
 	}
 
