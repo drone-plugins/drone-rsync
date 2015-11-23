@@ -17,9 +17,8 @@ import (
 )
 
 type Rsync struct {
-	Hosts drone.StringSlice `json:"host"`
-	host  string            `json:"-"`
-
+	Hosts     drone.StringSlice `json:"host"`
+	host      string            `json:"-"`
 	User      string            `json:"user"`
 	Port      int               `json:"port"`
 	Source    string            `json:"source"`
