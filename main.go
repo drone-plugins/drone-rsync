@@ -20,14 +20,14 @@ type Rsync struct {
 	Hosts drone.StringSlice `json:"host"`
 	host  string            `json:"-"`
 
-	User      string   `json:"user"`
-	Port      int      `json:"port"`
-	Source    string   `json:"source"`
-	Target    string   `json:"target"`
-	Delete    bool     `json:"delete"`
-	Recursive bool     `json:"recursive"`
-	Exclude   []string `json:"exclude"`
-	Commands  []string `json:"commands"`
+	User      string   					`json:"user"`
+	Port      int      					`json:"port"`
+	Source    string   					`json:"source"`
+	Target    string   					`json:"target"`
+	Delete    bool     					`json:"delete"`
+	Recursive bool     					`json:"recursive"`
+	Exclude   drone.StringSlice `json:"exclude"`
+	Commands  []string          `json:"commands"`
 }
 
 func main() {
@@ -106,10 +106,8 @@ func buildRsync(rs *Rsync) *exec.Cmd {
 	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
 
 	// append files to exclude
-	if len(rs.Exclude) != 0 {
-		for _,pattern := range rs.Exclude {
-			args = append(args, fmt.Sprintf("--exclude=%s", pattern))
-		}
+	for _,pattern := range rs.Exclude.Slice {
+		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
 	}
 
 	args = append(args, rs.Source)
