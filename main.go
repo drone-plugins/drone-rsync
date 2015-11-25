@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -18,7 +19,6 @@ import (
 
 type Rsync struct {
 	Hosts     drone.StringSlice `json:"host"`
-	host      string            `json:"-"`
 	User      string            `json:"user"`
 	Port      int               `json:"port"`
 	Source    string            `json:"source"`
@@ -55,13 +55,8 @@ func main() {
 
 	// execute for each host
 	for _, host := range v.Hosts.Slice() {
-
-		// sets the current host
-		v.host = host
-
 		// sync the files on the remote machine
-		rs := buildRsync(v)
-		rs.Dir = w.Path
+		rs := v.buildRsync(host, w.Path)
 		rs.Stderr = os.Stderr
 		rs.Stdout = os.Stdout
 		trace(rs)
@@ -77,7 +72,7 @@ func main() {
 		}
 
 		// execute commands on remote server (reboot instance, etc)
-		if err := run(v, w.Keys); err != nil {
+		if err := v.run(w.Keys, host); err != nil {
 			os.Exit(1)
 			return
 		}
@@ -85,7 +80,7 @@ func main() {
 }
 
 // Build rsync command
-func buildRsync(rs *Rsync) *exec.Cmd {
+func (rs *Rsync) buildRsync(host, root string) *exec.Cmd {
 
 	var args []string
 	args = append(args, "-az")
@@ -105,24 +100,21 @@ func buildRsync(rs *Rsync) *exec.Cmd {
 	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
 
 	// append files to exclude
-	for _,pattern := range rs.Exclude.Slice() {
+	for _, pattern := range rs.Exclude.Slice() {
 		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
 	}
 
-	args = append(args, rs.Source)
-	args = append(args, fmt.Sprintf("%s@%s:%s", rs.User, rs.host, rs.Target))
+	args = append(args, rs.globSource(root)...)
+	args = append(args, fmt.Sprintf("%s@%s:%s", rs.User, host, rs.Target))
 
 	return exec.Command("rsync", args...)
 }
 
 // Run commands on the remote host
-func run(rs *Rsync, keys *drone.Key) error {
+func (rs *Rsync) run(keys *drone.Key, host string) error {
 
 	// join the host and port if necessary
-	addr := net.JoinHostPort(
-		rs.host,
-		strconv.Itoa(rs.Port),
-	)
+	addr := net.JoinHostPort(host, strconv.Itoa(rs.Port))
 
 	// trace command used for debugging in the build logs
 	fmt.Printf("$ ssh %s@%s -p %d\n", rs.User, addr, rs.Port)
@@ -151,6 +143,31 @@ func run(rs *Rsync, keys *drone.Key) error {
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 	return session.Run(strings.Join(rs.Commands, "\n"))
+}
+
+// globSource returns the names of all files matching the source pattern.
+// If there are no matches or an error occurs, the original source string is
+// returned.
+//
+// If the source path is not absolute the root path will be prepended to the
+// source path prior to matching.
+func (rs *Rsync) globSource(root string) []string {
+	src := rs.Source
+	if !path.IsAbs(rs.Source) {
+		src = path.Join(root, rs.Source)
+	}
+	srcs, err := filepath.Glob(src)
+	if err != nil || len(srcs) == 0 {
+		return []string{rs.Source}
+	}
+	sep := fmt.Sprintf("%c", os.PathSeparator)
+	if strings.HasSuffix(rs.Source, sep) {
+		// Add back the trailing slash removed by path.Join()
+		for i := range srcs {
+			srcs[i] += sep
+		}
+	}
+	return srcs
 }
 
 // Trace writes each command to standard error (preceded by a ‘$ ’) before it
