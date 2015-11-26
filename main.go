@@ -34,11 +34,15 @@ func main() {
 	v := new(Rsync)
 	plugin.Param("workspace", w)
 	plugin.Param("vargs", v)
-	plugin.Parse()
+	if err := plugin.Parse(); err != nil {
+		fmt.Println("Rsync: unable to parse invalid plugin input.")
+		os.Exit(1)	
+	}
+
 
 	// write the rsa private key if provided
 	if err := writeKey(w); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
