@@ -7,7 +7,9 @@ Use the rsync plugin to deploy files to a server using rsync over ssh. The follo
 * `target` - target path to which files are copied
 * `delete` - delete extraneous files from the target dir
 * `recursive` - recursively transfer all files
+* `include` - include files matching the specified pattern
 * `exclude` - exclude files matching the specified pattern
+* `filter` - include or exclude files according to filtering rules
 * `commands` - execute commands on the remote host after files are copied
 
 Sample configuration in the `.drone.yml` file:

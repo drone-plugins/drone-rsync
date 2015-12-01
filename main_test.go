@@ -1,18 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"strings"
 	"testing"
-)
 
-func abs(path string) string {
-	s, err := filepath.Abs(path)
-	if err != nil {
-		panic(err)
-	}
-	return s
-}
+	"github.com/drone/drone-go/drone"
+)
 
 func TestBuildRsync(t *testing.T) {
 	testdata := []struct {
@@ -163,6 +158,49 @@ func TestBuildRsync(t *testing.T) {
 				"jqhacker@example.com:/dev/null",
 			},
 		},
+		{
+			"example.com",
+			".",
+			Rsync{
+				User:    "jqhacker",
+				Target:  "/dev/null",
+				Source:  "./",
+				Include: ss([]string{"testdata/"}),
+				Exclude: ss([]string{"*.txt", "*.rpm"}),
+			},
+			[]string{
+				"rsync",
+				"-az",
+				"-e",
+				"ssh -p 0 -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no",
+				"--include=testdata/",
+				"--exclude=*.txt",
+				"--exclude=*.rpm",
+				"./",
+				"jqhacker@example.com:/dev/null",
+			},
+		},
+		{
+			"example.com",
+			".",
+			Rsync{
+				User:   "jqhacker",
+				Source: "./",
+				Target: "/dev/null",
+				Filter: ss([]string{"+ testdata/", "- testdata/*.txt", "- testdata/*.rpm"}),
+			},
+			[]string{
+				"rsync",
+				"-az",
+				"-e",
+				"ssh -p 0 -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no",
+				"--filter=+ testdata/",
+				"--filter=- testdata/*.txt",
+				"--filter=- testdata/*.rpm",
+				"./",
+				"jqhacker@example.com:/dev/null",
+			},
+		},
 	}
 	for i, data := range testdata {
 		c := data.rs.buildRsync(data.host, data.root)
@@ -175,4 +213,25 @@ func TestBuildRsync(t *testing.T) {
 			}
 		}
 	}
+}
+
+func abs(path string) string {
+	s, err := filepath.Abs(path)
+	if err != nil {
+		panic(err)
+	}
+	return s
+}
+
+func ss(args []string) drone.StringSlice {
+	j, err := json.Marshal(args)
+	if err != nil {
+		panic(err)
+	}
+	s := drone.StringSlice{}
+	err = s.UnmarshalJSON(j)
+	if err != nil {
+		panic(err)
+	}
+	return s
 }

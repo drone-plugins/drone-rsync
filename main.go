@@ -25,7 +25,9 @@ type Rsync struct {
 	Target    string            `json:"target"`
 	Delete    bool              `json:"delete"`
 	Recursive bool              `json:"recursive"`
+	Include   drone.StringSlice `json:"include"`
 	Exclude   drone.StringSlice `json:"exclude"`
+	Filter    drone.StringSlice `json:"filter"`
 	Commands  []string          `json:"commands"`
 }
 
@@ -36,9 +38,8 @@ func main() {
 	plugin.Param("vargs", v)
 	if err := plugin.Parse(); err != nil {
 		fmt.Println("Rsync: unable to parse invalid plugin input.")
-		os.Exit(1)	
+		os.Exit(1)
 	}
-
 
 	// write the rsa private key if provided
 	if err := writeKey(w); err != nil {
@@ -103,9 +104,15 @@ func (rs *Rsync) buildRsync(host, root string) *exec.Cmd {
 	args = append(args, "-e")
 	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
 
-	// append files to exclude
+	// append filtering rules
+	for _, pattern := range rs.Include.Slice() {
+		args = append(args, fmt.Sprintf("--include=%s", pattern))
+	}
 	for _, pattern := range rs.Exclude.Slice() {
 		args = append(args, fmt.Sprintf("--exclude=%s", pattern))
+	}
+	for _, pattern := range rs.Filter.Slice() {
+		args = append(args, fmt.Sprintf("--filter=%s", pattern))
 	}
 
 	args = append(args, rs.globSource(root)...)

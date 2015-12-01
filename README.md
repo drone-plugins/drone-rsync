@@ -21,7 +21,9 @@ Sync files with a remote server using the host machines rsync install:
 		"target": "/path/on/server",
 		"delete": false,
 		"recursive": false,
-		"exclude": []
+                "include": [],
+		"exclude": [],
+                "filter": []
 	}
 }
 EOF
