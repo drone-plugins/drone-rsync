@@ -40,11 +40,16 @@ func main() {
 		fmt.Println("Rsync: unable to parse invalid plugin input.")
 		os.Exit(1)
 	}
+	if err := rsync(w, v); err != nil {
+		fmt.Printf("Rsync: %s\n", err)
+		os.Exit(1)
+	}
+}
 
+func rsync(w *drone.Workspace, v *Rsync) error {
 	// write the rsa private key if provided
 	if err := writeKey(w); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	// default values
@@ -67,8 +72,7 @@ func main() {
 		trace(rs)
 		err := rs.Run()
 		if err != nil {
-			os.Exit(1)
-			return
+			return err
 		}
 
 		// continue if no commands
@@ -78,10 +82,11 @@ func main() {
 
 		// execute commands on remote server (reboot instance, etc)
 		if err := v.run(w.Keys, host); err != nil {
-			os.Exit(1)
-			return
+			return err
 		}
 	}
+
+	return nil
 }
 
 // Build rsync command
