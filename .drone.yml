@@ -6,9 +6,15 @@ build:
     - GOARCH=amd64
     - CGO_ENABLED=0
   commands:
+    - apt-get update && apt-get install -y rsync
     - go get
     - go build
     - go test
+
+compose:
+  rsync:
+    image: msteinert/drone-rsync-test
+    pull: true
 
 publish:
   docker:
