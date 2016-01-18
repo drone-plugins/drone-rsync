@@ -1,5 +1,8 @@
 # drone-rsync
 
+[![Build Status](http://beta.drone.io/api/badges/drone-plugins/drone-rsync/status.svg)](http://beta.drone.io/drone-plugins/drone-rsync)
+[![](https://badge.imagelayers.io/plugins/drone-rsync:latest.svg)](https://imagelayers.io/?images=plugins/drone-rsync:latest 'Get your own badge on imagelayers.io')
+
 Drone plugin for rsyncing files to a remote server
 
 ## Usage
