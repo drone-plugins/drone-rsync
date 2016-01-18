@@ -31,7 +31,13 @@ type Rsync struct {
 	Commands  []string          `json:"commands"`
 }
 
+var (
+	buildDate string
+)
+
 func main() {
+	fmt.Printf("Drone Rsync Plugin built at %s\n", buildDate)
+
 	w := new(drone.Workspace)
 	v := new(Rsync)
 	plugin.Param("workspace", w)
