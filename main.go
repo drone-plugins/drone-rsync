@@ -32,11 +32,11 @@ type Rsync struct {
 }
 
 var (
-	buildDate string
+	buildCommit string
 )
 
 func main() {
-	fmt.Printf("Drone Rsync Plugin built at %s\n", buildDate)
+	fmt.Printf("Drone Rsync Plugin built from %s\n", buildCommit)
 
 	w := new(drone.Workspace)
 	v := new(Rsync)
