@@ -1,40 +1,28 @@
-build:
-  image: golang:1.5
-  environment:
-    - CGO_ENABLED=0
-  commands:
-    - apt-get update && apt-get install -y rsync
+pipeline:
+  test:
+    image: golang:1.6
+    environment:
+      - CGO_ENABLED=0
+      - GOPATH=/drone
+    commands:
+      - apt-get update
+      - apt-get install -y rsync
 
-    - make deps
-    - make vet
-    - make build
-    - make test
+      - make vet
+      - make build
+      - make test
+  docker:
+    storage_driver: overlay
+    repo: plugins/drone-rsync
+    tag: [ "latest" ]
+    when:
+      branch: release/0.4
+      event: push
 
-compose:
+services:
   rsync:
     image: msteinert/drone-rsync-test
     pull: true
-
-publish:
-  coverage:
-    when:
-      branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
-    repo: plugins/drone-rsync
-    tag: latest
-    when:
-      branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
-    repo: plugins/drone-rsync
-    tag: develop
-    when:
-      branch: develop
 
 plugin:
   name: Rsync
