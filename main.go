@@ -113,7 +113,7 @@ func (rs *Rsync) buildRsync(host, root string) *exec.Cmd {
 
 	// append custom ssh parameters
 	args = append(args, "-e")
-	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
+	args = append(args, fmt.Sprintf("\"ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no\"", rs.Port))
 
 	// append filtering rules
 	for _, pattern := range rs.Include.Slice() {
