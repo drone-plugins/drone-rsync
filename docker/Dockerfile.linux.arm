@@ -1,4 +1,4 @@
-FROM plugins/base:arm64
+FROM plugins/base:linux-arm
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
   org.label-schema.name="Drone Rsync" \
@@ -7,5 +7,5 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
 
 RUN apk add --no-cache openssh-client rsync
 
-ADD release/linux/arm64/drone-rsync /bin/
+ADD release/linux/arm/drone-rsync /bin/
 ENTRYPOINT ["/bin/drone-rsync"]
