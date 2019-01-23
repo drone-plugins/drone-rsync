@@ -1,5 +1,6 @@
 github.com/drone/drone-go v0.0.0-20160502151758-eaa41f7836a1 h1:2fZ6NZF8Z37FLn5NIElsW3OELMY2xzQ2XPuXJmnAowE=
 github.com/drone/drone-go v0.0.0-20160502151758-eaa41f7836a1/go.mod h1:qVb1k1w9X5jgoGyLtbnfWNnd4XZfAwokxBmiutbpGqw=
+github.com/drone/drone-go v0.8.4/go.mod h1:qVb1k1w9X5jgoGyLtbnfWNnd4XZfAwokxBmiutbpGqw=
 github.com/golang/protobuf v1.2.0 h1:P3YflyNX/ehuJFLhxviNdFxQPkGK5cDcApsge1SqnvM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 golang.org/x/crypto v0.0.0-20180316180149-374053ea96cb h1:O6ztCaemiMr99EgJdgXrr0J7N0EQN1oky/0GxML9Avk=
