@@ -6,6 +6,6 @@ require (
 	golang.org/x/net v0.0.0-20190123210406-ed066c81e75e // indirect
 	golang.org/x/oauth2 v0.0.0-20190123210446-5dab4167f31c // indirect
 	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4 // indirect
-	golang.org/x/sys v0.0.0-20190123210601-c6b37f3e9285 // indirect
+	golang.org/x/sys v0.0.0-20190124104648-b90733256f2e // indirect
 	google.golang.org/appengine v1.4.0 // indirect
 )
