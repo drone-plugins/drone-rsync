@@ -1,12 +1,10 @@
 # escape=`
-FROM plugins/base:windows-amd64
+FROM plugins/base:windows-1809
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" `
   org.label-schema.name="Drone Rsync" `
   org.label-schema.vendor="Drone.IO Community" `
   org.label-schema.schema-version="1.0"
 
-# TODO: install required tools
-
-ADD release\drone-rsync.exe c:\drone-rsync.exe
-ENTRYPOINT [ "c:\\drone-rsync.exe" ]
+ADD release/windows/amd64/drone-rsync.exe C:/bin/drone-rsync.exe
+ENTRYPOINT [ "C:\\bin\\drone-rsync.exe" ]
