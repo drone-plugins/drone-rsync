@@ -8,108 +8,46 @@
 [![Go Doc](https://godoc.org/github.com/drone-plugins/drone-rsync?status.svg)](http://godoc.org/github.com/drone-plugins/drone-rsync)
 [![Go Report](https://goreportcard.com/badge/github.com/drone-plugins/drone-rsync)](https://goreportcard.com/report/github.com/drone-plugins/drone-rsync)
 
-Drone plugin to deploy or update a project via Rsync. For the usage information and a listing of the available options please take a look at [the docs](DOCS.md).
+> Warning: This plugin has not been migrated to Drone >= 0.5 yet, you are not able to use it with a current Drone version until somebody volunteers to update the plugin structure to the new format.
 
-## Binary
+Drone plugin to deploy or update a project via Rsync. For the usage information and a listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-rsync/).
 
-Build the binary using `make`:
+## Build
 
-```
-make deps build
-```
+Build the binary with the following command:
 
-### Example
+```console
+export GOOS=linux
+export GOARCH=amd64
+export CGO_ENABLED=0
+export GO111MODULE=on
 
-```sh
-./drone-rsync <<EOF
-{
-    "repo": {
-        "clone_url": "git://github.com/drone/drone",
-        "owner": "drone",
-        "name": "drone",
-        "full_name": "drone/drone"
-    },
-    "system": {
-        "link_url": "https://beta.drone.io"
-    },
-    "build": {
-        "number": 22,
-        "status": "success",
-        "started_at": 1421029603,
-        "finished_at": 1421029813,
-        "message": "Update the Readme",
-        "author": "johnsmith",
-        "author_email": "john.smith@gmail.com"
-        "event": "push",
-        "branch": "master",
-        "commit": "436b7a6e2abaddfd35740527353e78a227ddcb2c",
-        "ref": "refs/heads/master"
-    },
-    "workspace": {
-        "root": "/drone/src",
-        "path": "/drone/src/github.com/drone/drone"
-    },
-    "vargs": {
-        "user": "root",
-        "host":" test.drone.io",
-        "port": 22,
-        "source": "dist/",
-        "target": "/path/on/server",
-        "delete": false,
-        "recursive": false
-    }
-}
-EOF
+go build -v -a -tags netgo -o release/linux/amd64/drone-rsync
 ```
 
 ## Docker
 
-Build the container using `make`:
+Build the Docker image with the following command:
 
+```console
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.amd64 --tag plugins/rsync .
 ```
-make deps docker
-```
 
-### Example
+## Usage
 
-```sh
-docker run -i plugins/drone-rsync <<EOF
-{
-    "repo": {
-        "clone_url": "git://github.com/drone/drone",
-        "owner": "drone",
-        "name": "drone",
-        "full_name": "drone/drone"
-    },
-    "system": {
-        "link_url": "https://beta.drone.io"
-    },
-    "build": {
-        "number": 22,
-        "status": "success",
-        "started_at": 1421029603,
-        "finished_at": 1421029813,
-        "message": "Update the Readme",
-        "author": "johnsmith",
-        "author_email": "john.smith@gmail.com"
-        "event": "push",
-        "branch": "master",
-        "commit": "436b7a6e2abaddfd35740527353e78a227ddcb2c",
-        "ref": "refs/heads/master"
-    },
-    "workspace": {
-        "root": "/drone/src",
-        "path": "/drone/src/github.com/drone/drone"
-    },
-    "vargs": {
-        "user": "root",
-        "host":" test.drone.io",
-        "port": 22,
-        "source": "dist/",
-        "target": "/path/on/server",
-        "delete": false,
-        "recursive": false
-    }
-}
-EOF
+```console
+docker run --rm \
+  -e PLUGIN_USER=root \
+  -e PLUGIN_HOST=test.drone.io \
+  -e PLUGIN_PORT=22 \
+  -e PLUGIN_SOURCE=dist/ \
+  -e PLUGIN_TARGET=/path/on/server \
+  -e PLUGIN_DELETE=false \
+  -e PLUGIN_RECURSIVE=false \
+  -v $(pwd):$(pwd) \
+  -w $(pwd) \
+  plugins/rsync
 ```

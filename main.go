@@ -32,11 +32,11 @@ type Rsync struct {
 }
 
 var (
-	buildCommit string
+	version = "unknown"
 )
 
 func main() {
-	fmt.Printf("Drone Rsync Plugin built from %s\n", buildCommit)
+	fmt.Printf("Drone Rsync Plugin built from %s\n", version)
 
 	w := new(drone.Workspace)
 	v := new(Rsync)
