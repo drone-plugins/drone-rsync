@@ -1,11 +1,11 @@
-FROM plugins/base:linux-amd64
+FROM plugins/base:linux-amd64@sha256:eebce77ace858799687e65220223fc0fe94b3c87d19dafaf2b8959960f632ce7
 
 LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
   org.label-schema.name="Drone Rsync" \
   org.label-schema.vendor="Drone.IO Community" \
   org.label-schema.schema-version="1.0"
 
-RUN apk add --no-cache openssh-client rsync
+RUN apk add --no-cache 'ca-certificates>=20261020-r0' openssh-client rsync
 
 ADD release/linux/amd64/drone-rsync /bin/
 ENTRYPOINT ["/bin/drone-rsync"]
